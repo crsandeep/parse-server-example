@@ -14,11 +14,8 @@ if (!databaseUri) {
 
 var s3Options = {
   "bucket": "prodview",
-  // optional:
-  "accessKey": "AKIAISLVYAROOX6IHF7A", // default value
-  "secretKey": "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", // default value
-  "region": 'us-east-1', // default value
-  "directAccess": false // default value
+  "accessKey": "AKIAIMBFKJKVCDKNBJEA",
+  "secretKey": "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"
 };
 
 var s3Adapter = new S3Adapter(s3Options);

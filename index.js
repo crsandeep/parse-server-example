@@ -4,12 +4,24 @@
 var express = require('express');
 var ParseServer = require('parse-server').ParseServer;
 var path = require('path');
+var S3Adapter = require('parse-server-s3-adapter');
 
 var databaseUri = process.env.DATABASE_URI || process.env.MONGODB_URI;
 
 if (!databaseUri) {
     console.log('DATABASE_URI not specified, falling back to localhost.');
 }
+
+var s3Options = {
+  "bucket": "prodview",
+  // optional:
+  "accessKey": "AKIAISLVYAROOX6IHF7A", // default value
+  "secretKey": "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", // default value
+  "region": 'us-east-1', // default value
+  "directAccess": false // default value
+};
+
+var s3Adapter = new S3Adapter(s3Options);
 
 var api = new ParseServer({
     databaseURI: databaseUri || 'mongodb://codepath:codepath@ds147777.mlab.com:47777/codepath',
@@ -19,26 +31,12 @@ var api = new ParseServer({
     serverURL: process.env.SERVER_URL || 'https://codepath.herokuapp.com/parse', // Don't forget to change to https if needed
     liveQuery: {
         classNames: ["Posts", "Comments"] // List of classes to support for query subscriptions
-    }
+    },
+    filesAdapter: s3Adapter
 });
 // Client-keys like the javascript key or the .NET key are not necessary with parse-server
 // If you wish you require them, you can set them as options in the initialization above:
 // javascriptKey, restAPIKey, dotNetKey, clientKey
-
-var ParseDashboard = require('parse-dashboard');
-
-var dashboard = new ParseDashboard({
-    "apps": [{
-        "serverURL": process.env.SERVER_URL || 'https://codepath.herokuapp.com/parse',
-        "appId": process.env.APP_ID || 'myAppId',
-        "masterKey": process.env.MASTER_KEY || '',
-        "appName": "MyApp"
-    }],
-    "users": [{
-        "user": process.env.DASHBOARD_USERNAME,
-        "pass": process.env.DASHBOARD_PASSWORD
-    }]
-});
 
 var app = express();
 
@@ -48,7 +46,6 @@ app.use('/public', express.static(path.join(__dirname, '/public')));
 // Serve the Parse API on the /parse URL prefix
 var mountPath = process.env.PARSE_MOUNT || '/parse';
 app.use(mountPath, api);
-app.use('/dashboard', dashboard);
 
 // Parse Server plays nicely with the rest of your web routes
 app.get('/', function(req, res) {

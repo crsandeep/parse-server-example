@@ -7,7 +7,11 @@ Parse.Cloud.define('pushChannelTest', function(request, response) {
 
     Parse.Push.send({
         where: pushQuery,
-        data: "Just a test",
+        data: {
+            alert: 'Parse server test',
+            badge: 1,
+            sound: 'default'
+        }
     }, {
         success: function() {
             console.log("#### PUSH OK");

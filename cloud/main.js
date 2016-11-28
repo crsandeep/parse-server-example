@@ -18,8 +18,8 @@ Parse.Cloud.define('pushChannelTest', function(request, response) {
             response.success('parse server success');
         },
         error: function(error) {
-            console.log("#### PUSH ERROR" + error.message);
-            response.success('parse server error', error);
+            console.log("#### PUSH ERROR", JSON.stringify(error));
+            response.success('parse server error' + JSON.stringify(error));
         },
         useMasterKey: true
     });

@@ -1,25 +1,29 @@
-Parse.Cloud.define('pushChannelTest', function(request, response) {
+Parse.Cloud.define('facebookNotifyFriends', function(request, response) {
 
-    var params = request.params;
-    var user = request.user;
-    var pushQuery = new Parse.Query(Parse.Installation);
-    pushQuery.equalTo("deviceType", "android");
+    var currentUser = request.user;
+    console.log(currentUser);
+
+    var userQuery = new Parse.Query(Parse.User);
+    userQuery.containedIn("fbid", currentUser.get("fbFriends"));
+
+    var query = new Parse.Query(Parse.Installation);
+    query.matchesQuery("user", userQuery);
+
+    var pushMessage = 'Follow your Facebook friend ' + currentUser.get('firstName') + ' on Quest';
 
     Parse.Push.send({
-        where: pushQuery,
+        where: query,
         data: {
-            alert: 'Parse server test',
+            alert: pushMessage,
             badge: 1,
             sound: 'default'
         }
     }, {
         success: function() {
-            console.log("#### PUSH OK");
-            response.success('parse server success');
+            console.log('##### PUSH OK');
         },
         error: function(error) {
-            console.log("#### PUSH ERROR", JSON.stringify(error));
-            response.success('parse server error' + JSON.stringify(error));
+            console.log('##### PUSH ERROR');
         },
         useMasterKey: true
     });

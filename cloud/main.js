@@ -21,9 +21,11 @@ Parse.Cloud.define('facebookNotifyFriends', function(request, response) {
     }, {
         success: function() {
             console.log('##### PUSH OK');
+            response.success('success sent notifications');
         },
         error: function(error) {
             console.log('##### PUSH ERROR');
+            response.error(error);
         },
         useMasterKey: true
     });

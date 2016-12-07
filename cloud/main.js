@@ -49,7 +49,7 @@ Parse.Cloud.define('pricePush', function(request, response) {
 
     var P1 = Parse.Object.extend("Product");
     var p1q = new Parse.Query(P1);
-    query.get(productId, {
+    p1q.get(productId, {
       success: function(pout) {
           console.log("product id from query is" + pout.id);
           var userQuery = new Parse.Query(Parse.User);

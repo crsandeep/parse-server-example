@@ -30,3 +30,41 @@ Parse.Cloud.define('facebookNotifyFriends', function(request, response) {
         useMasterKey: true
     });
 });
+
+
+Parse.Cloud.define('pricePush', function(request, response) {
+
+    var params = request.params;
+    var productId = params.productId;
+    var price = params.price;
+    var store = params.store;
+    var productName = params.name;
+
+    var Product = Parse.Object.extend("Product");
+    var prod = new Product();
+    prod.id = productId;
+
+    var userQuery = new Parse.Query(Parse.User);
+    userQuery.equalTo("wishListProducts", prod);
+
+    var pushMessage = 'Hurry up: ' + store + ' has ' + productName + ' for ' + price;
+
+    Parse.Push.send({
+        where: userQuery,
+        data: {
+            alert: pushMessage,
+            badge: 1,
+            sound: 'default'
+        }
+    }, {
+        success: function() {
+            console.log('##### PUSH OK');
+            response.success('success sent notifications');
+        },
+        error: function(error) {
+            console.log('##### PUSH ERROR');
+            response.error(error);
+        },
+        useMasterKey: true
+    });
+});

@@ -54,9 +54,14 @@ Parse.Cloud.define('pricePush', function(request, response) {
           console.log("product id from query is" + pout.id);
           var userQuery = new Parse.Query(Parse.User);
           userQuery.equalTo("wishListProducts", pout);
+
+          var finalQuery = new Parse.Query(Parse.Installation);
+          finalQuery.matchesQuery("user", userQuery);
+
+
           var pushMessage = 'Hurry up: ' + store + ' has ' + productName + ' for ' + price;
           Parse.Push.send({
-              where: userQuery,
+              where: finalQuery,
               data: {
                   alert: pushMessage,
                   badge: 1,

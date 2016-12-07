@@ -40,6 +40,11 @@ Parse.Cloud.define('pricePush', function(request, response) {
     var store = params.store;
     var productName = params.name;
 
+    console.log("productId:", productId);
+    console.log("price:", price);
+    console.log("store:", store);
+    console.log("productName:", productName);
+
     var Product = Parse.Object.extend("Product");
     var prod = new Product();
     prod.id = productId;
